@@ -20,6 +20,29 @@ namespace PRSecox.Controllers
             _context = context;
         }
 
+
+        // https://localhost:7090/api/products/get-product-by-part-num/2/1234
+        [HttpGet("get-product-by-part-num/{vendorid}/{partNum}")]
+        public async Task<ActionResult<Product>> GetProductByPartNum(string partNum, int vendorid)
+        {
+           
+            var product = await _context.Products.Include(p => p.Vendor).FirstOrDefaultAsync(p => p.PartNumber == partNum && p.VendorId == vendorid);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return product;
+        }
+
+
+
+
+
+
+
+
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
