@@ -15,6 +15,14 @@ namespace PRSecox.Controllers
     {
         private readonly PRSDbContext _context;
 
+        const string statusRejected = "REJECTED";
+        const string statusApproved = "APPROVED";
+        const string statusNew = "NEW";
+        const string statusReview = "REVIEW";
+        
+        
+        
+        
         public RequestsController(PRSDbContext context)
         {
             _context = context;
@@ -114,6 +122,130 @@ namespace PRSecox.Controllers
 
             return NoContent();
         }
+
+
+        [HttpPost("review/{id}")]
+        public async Task<ActionResult<Request>> Review(int id)
+        {
+            try
+            {
+                var request = await _context.Requests.FindAsync(id);
+
+
+                if (_context.Requests == null)
+                {
+                    return NotFound();
+                }
+
+                if(request.Status == statusNew)
+                {
+                    if (request.Total <= 50)
+                        request.Status = statusApproved;
+                    else
+                        request.Status = statusReview;
+                }
+
+
+               await _context.SaveChangesAsync();
+
+                return request;
+            }
+
+
+                
+
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+
+        [HttpPost("reject/{id}")]
+        public async Task<ActionResult<Request>> Reject(int id, [FromBody] string reason)
+        {
+            try
+            {
+                var request = await _context.Requests.FindAsync(id);
+
+            
+                if (_context.Requests == null)
+                {
+                    return NotFound();
+                }
+
+                request.ReasonForRejection = reason;
+                request.Status = statusRejected;
+
+           
+                await _context.SaveChangesAsync();
+           
+            return request; 
+            }
+
+            catch (Exception ex)    
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+
+        [HttpPost("approve/{id}")]
+        public async Task<ActionResult<Request>> Approve(int id, [FromBody] string reason)
+        {
+            try
+            {
+                var request = await _context.Requests.FindAsync(id);
+
+
+                if (_context.Requests == null)
+                {
+                    return NotFound();
+                }
+
+                request.ReasonForRejection = reason;
+                request.Status = statusApproved;
+
+
+                await _context.SaveChangesAsync();
+
+                return request;
+            }
+
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+
+        [HttpGet("reviews/{id}")]
+        public async Task<ActionResult<IEnumerable<Request>>> Reviews(int id)
+        {
+
+            var request = await _context.Requests.Include(r => r.User).Where(r => r.UserId != id && r.Status == statusReview)
+                .ToListAsync();
+
+
+
+            if (_context.Requests == null)
+            {
+                return NotFound();
+            }
+
+            if (request == null)
+            {
+                return NotFound();
+            }
+
+            await _context.SaveChangesAsync();
+            
+            return request;
+        
+        
+        }
+
+
 
         private bool RequestExists(int id)
         {
