@@ -25,6 +25,23 @@ namespace PRSecox.Controllers
         //todo: POST: GET: /api/users/login ---- pass as body username and password
 
 
+
+        [HttpPost("login")]
+        public async Task<ActionResult> GetLoginByUsernamePassword([FromBody] LoginDTO login)
+        {
+            //find all vendors in a city and state
+            var user = await _context.Users.Where(u => u.Username == login.Username && u.Password == login.Password).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+            //new { Firstname = user.Firstname, Lastname = user.Lastname, Id = user.Id, Admin = user.Admin }
+        }
+
+
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
@@ -125,5 +142,11 @@ namespace PRSecox.Controllers
         {
             return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+
+        
+
+
+
     }
 }

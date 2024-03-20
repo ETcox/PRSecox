@@ -20,6 +20,54 @@ namespace PRSecox.Controllers
             _context = context;
         }
 
+
+        //api/vendors/code/{code}
+
+        //POST: api/vendors/code/abc
+        //context-type: application/json
+        //<blank line>
+        //empty
+
+
+        //[HttpGet("code/{code}")]
+        //public ActionResult<Vendor> GetVendorByCode(string code)
+
+        [HttpPost("code")]
+        public ActionResult GetVendorByCode([FromBody] string code)
+        {
+            //POST: api/vendors/code
+            //context-type: application/json
+            //<blank line>
+            //body
+
+
+
+            var vendor = _context.Vendors.Where(v => v.Code == code).FirstOrDefault();
+
+            if(vendor == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(vendor);
+        }
+
+
+
+        [HttpPost("byCityState")]
+        public ActionResult GetVendorByCityState([FromBody] CityStateDTO location)
+        {
+            //find all vendors in a city and state
+            var vendors = _context.Vendors.Where(v => v.City ==location.City && v.State == location.State);
+
+            // return all vendors in a city and state
+
+            return Ok(vendors);
+        }
+
+
+
+
         // GET: api/Vendors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vendor>>> GetVendors()

@@ -24,5 +24,7 @@ namespace PRSecox.Models
 
         public Request? Request { get; set; }
         public Product? Product { get; set; }
+
+     
     }
 }

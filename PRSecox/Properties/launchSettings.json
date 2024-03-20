@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
@@ -11,13 +11,13 @@
   "profiles": {
     "PRSecox": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
-      "applicationUrl": "https://localhost:7090;http://localhost:5090",
+      "launchUrl": "https://localhost:7090/index.html",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:7090;http://localhost:5090",
+      "dotnetRunMessages": true
     },
     "IIS Express": {
       "commandName": "IISExpress",

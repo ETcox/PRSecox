@@ -191,7 +191,7 @@ namespace PRSecox.Controllers
 
 
         [HttpPost("approve/{id}")]
-        public async Task<ActionResult<Request>> Approve(int id, [FromBody] string reason)
+        public async Task<ActionResult<Request>> Approve(int id)
         {
             try
             {
@@ -203,7 +203,7 @@ namespace PRSecox.Controllers
                     return NotFound();
                 }
 
-                request.ReasonForRejection = reason;
+               
                 request.Status = statusApproved;
 
 

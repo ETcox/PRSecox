@@ -32,6 +32,23 @@ namespace PRSecox.Controllers
             
         }
 
+
+        [HttpGet("lines-for-pr/{id}")]
+        public async Task<ActionResult<IEnumerable<LineItem>>> GetLineItemsByRequestId(int id)
+        {
+
+            var lineitem = await _context.LineItems.Where(l => l.RequestId == id).Include(p => p.Product).ToListAsync();
+
+            
+            if (lineitem == null)
+            {
+                return NotFound();
+            }
+
+            return lineitem;
+
+        }
+
         // GET: api/LineItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<LineItem>> GetLineItem(int id)
@@ -65,7 +82,9 @@ namespace PRSecox.Controllers
 
             try
             {
+                var requestid = lineItem.RequestId;
                 await _context.SaveChangesAsync();
+                RecalculateRequestTotal(requestid);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -91,8 +110,11 @@ namespace PRSecox.Controllers
           {
               return Problem("Entity set 'PRSDbContext.LineItems'  is null.");
           }
+
+            var requestid = lineItem.RequestId;
             _context.LineItems.Add(lineItem);
             await _context.SaveChangesAsync();
+            RecalculateRequestTotal(requestid);
 
             return CreatedAtAction("GetLineItem", new { id = lineItem.Id }, lineItem);
         }
@@ -111,8 +133,11 @@ namespace PRSecox.Controllers
                 return NotFound();
             }
 
+
+            var requestid = lineItem.RequestId;
             _context.LineItems.Remove(lineItem);
             await _context.SaveChangesAsync();
+            RecalculateRequestTotal(requestid);
 
             return NoContent();
         }
@@ -120,6 +145,29 @@ namespace PRSecox.Controllers
         private bool LineItemExists(int id)
         {
             return (_context.LineItems?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+
+        private void RecalculateRequestTotal(int requestid)
+        {
+
+
+            var requesttotal = _context.LineItems.Include(p => p.Product).Where(l => l.RequestId == requestid).Sum( p => p.Quantity * p.Product.Price);
+            
+            
+           
+            var request = _context.Requests.FirstOrDefault(e => e.Id == requestid);
+
+
+            //calculate the total
+            // LINQ
+
+            //update the request total
+            // find the request, update the total and SaveChanges
+
+            request.Total = requesttotal;
+
+            _context.SaveChanges();
         }
     }
 }
