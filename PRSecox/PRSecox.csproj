@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\CityStateDTO.cs" />
+    <Compile Remove="Models\SafeUserDTO.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\photos\backpack.webp" />
   </ItemGroup>
 

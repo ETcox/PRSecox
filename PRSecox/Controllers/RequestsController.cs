@@ -28,6 +28,7 @@ namespace PRSecox.Controllers
             _context = context;
         }
 
+
         // GET: api/Requests
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequests()
@@ -36,6 +37,8 @@ namespace PRSecox.Controllers
           {
               return NotFound();
           }
+
+            //pulls all requests and showing the user it belongs to
             return await _context.Requests.Include(r => r.User).ToListAsync();
         }
 
@@ -47,6 +50,8 @@ namespace PRSecox.Controllers
           {
               return NotFound();
           }
+            
+            // getting a single request by its ID and showing the user
             var request = await _context.Requests.Include(r => r.User).FirstOrDefaultAsync(r => r.Id == id);
 
             if (request == null)
@@ -58,7 +63,7 @@ namespace PRSecox.Controllers
         }
 
         // PUT: api/Requests/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRequest(int id, Request request)
         {
@@ -89,7 +94,7 @@ namespace PRSecox.Controllers
         }
 
         // POST: api/Requests
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPost]
         public async Task<ActionResult<Request>> PostRequest(Request request)
         {
@@ -97,6 +102,8 @@ namespace PRSecox.Controllers
           {
               return Problem("Entity set 'PRSDbContext.Requests'  is null.");
           }
+            
+            //adds new request and saving to DB
             _context.Requests.Add(request);
             await _context.SaveChangesAsync();
 
@@ -117,6 +124,7 @@ namespace PRSecox.Controllers
                 return NotFound();
             }
 
+            // removing the request by Id and saving changes
             _context.Requests.Remove(request);
             await _context.SaveChangesAsync();
 
@@ -137,16 +145,22 @@ namespace PRSecox.Controllers
                     return NotFound();
                 }
 
-                if(request.Status == statusNew)
+
+                //Sets the status of the request for the id provided to "REVIEW"
+                //unless the total of the request is less than or equal to $50.
+                //If so, it sets the status directly to "APPROVED".
+
+                if (request.Total <= 50)
                 {
-                    if (request.Total <= 50)
-                        request.Status = statusApproved;
-                    else
-                        request.Status = statusReview;
+                    request.Status = statusApproved;
+                }
+                else
+                {
+                    request.Status = statusReview;
                 }
 
 
-               await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 return request;
             }
@@ -161,7 +175,8 @@ namespace PRSecox.Controllers
         }
 
 
-        [HttpPost("reject/{id}")]
+        [HttpPost("reject/{id}")]                               //takes input from the body and implements
+                                                                //into "reason for rejection"                    
         public async Task<ActionResult<Request>> Reject(int id, [FromBody] string reason)
         {
             try
@@ -173,6 +188,8 @@ namespace PRSecox.Controllers
                 {
                     return NotFound();
                 }
+
+
 
                 request.ReasonForRejection = reason;
                 request.Status = statusRejected;
@@ -190,7 +207,7 @@ namespace PRSecox.Controllers
         }
 
 
-        [HttpPost("approve/{id}")]
+        [HttpPost("approve/{id}")]  // sets the request status to Approved
         public async Task<ActionResult<Request>> Approve(int id)
         {
             try
@@ -219,11 +236,12 @@ namespace PRSecox.Controllers
         }
 
 
-        [HttpGet("reviews/{id}")]
-        public async Task<ActionResult<IEnumerable<Request>>> Reviews(int id)
+        [HttpGet("reviews/{userid}")] //Gets list of requests with the "REVIEW" status and not owned
+                                      //by the user with the primary key of id.
+        public async Task<ActionResult<IEnumerable<Request>>> Reviews(int userid)
         {
 
-            var request = await _context.Requests.Include(r => r.User).Where(r => r.UserId != id && r.Status == statusReview)
+            var request = await _context.Requests.Include(r => r.User).Where(r => r.UserId != userid && r.Status == statusReview)
                 .ToListAsync();
 
 

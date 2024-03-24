@@ -21,72 +21,25 @@ namespace PRSecox.Controllers
         }
 
 
-        //api/vendors/code/{code}
-
-        //POST: api/vendors/code/abc
-        //context-type: application/json
-        //<blank line>
-        //empty
-
-
-        //[HttpGet("code/{code}")]
-        //public ActionResult<Vendor> GetVendorByCode(string code)
-
-        [HttpPost("code")]
-        public ActionResult GetVendorByCode([FromBody] string code)
+        // GET: api/Vendors
+        [HttpGet] // return all vendors and including their products
+        public async Task<ActionResult<IEnumerable<Vendor>>> GetVendors()
         {
-            //POST: api/vendors/code
-            //context-type: application/json
-            //<blank line>
-            //body
-
-
-
-            var vendor = _context.Vendors.Where(v => v.Code == code).FirstOrDefault();
-
-            if(vendor == null)
+            if (_context.Vendors == null)
             {
                 return NotFound();
             }
-
-            return Ok(vendor);
-        }
-
-
-
-        [HttpPost("byCityState")]
-        public ActionResult GetVendorByCityState([FromBody] CityStateDTO location)
-        {
-            //find all vendors in a city and state
-            var vendors = _context.Vendors.Where(v => v.City ==location.City && v.State == location.State);
-
-            // return all vendors in a city and state
-
-            return Ok(vendors);
-        }
-
-
-
-
-        // GET: api/Vendors
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vendor>>> GetVendors()
-        {
-          if (_context.Vendors == null)
-          {
-              return NotFound();
-          }
             return await _context.Vendors.Include(v => v.Products).ToListAsync();
         }
 
         // GET: api/Vendors/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}")] // retrieve vendor by their id
         public async Task<ActionResult<Vendor>> GetVendor(int id)
         {
-          if (_context.Vendors == null)
-          {
-              return NotFound();
-          }
+            if (_context.Vendors == null)
+            {
+                return NotFound();
+            }
             var vendor = await _context.Vendors.Include(v => v.Products).FirstOrDefaultAsync(v => v.Id == id);
 
             if (vendor == null)
@@ -98,8 +51,7 @@ namespace PRSecox.Controllers
         }
 
         // PUT: api/Vendors/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("{id}")] // updating a single/existing vendor on their id
         public async Task<IActionResult> PutVendor(int id, Vendor vendor)
         {
             if (id != vendor.Id)
@@ -128,15 +80,15 @@ namespace PRSecox.Controllers
             return NoContent();
         }
 
+        
         // POST: api/Vendors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost]  //creating a new vendor
         public async Task<ActionResult<Vendor>> PostVendor(Vendor vendor)
         {
-          if (_context.Vendors == null)
-          {
-              return Problem("Entity set 'PRSDbContext.Vendors'  is null.");
-          }
+            if (_context.Vendors == null)
+            {
+                return Problem("Entity set 'PRSDbContext.Vendors'  is null.");
+            }
             _context.Vendors.Add(vendor);
             await _context.SaveChangesAsync();
 
@@ -144,7 +96,7 @@ namespace PRSecox.Controllers
         }
 
         // DELETE: api/Vendors/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")] //deletes a single vendor by id
         public async Task<IActionResult> DeleteVendor(int id)
         {
             if (_context.Vendors == null)

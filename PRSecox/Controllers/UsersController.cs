@@ -23,13 +23,14 @@ namespace PRSecox.Controllers
 
         //todo: GET: /api/users/username/password
         //todo: POST: GET: /api/users/login ---- pass as body username and password
+        //created a new class/"DTO" - data transfer object "LoginDTO" 
+        //limits data returned
 
 
-
-        [HttpPost("login")]
+        [HttpPost("login")]  
         public async Task<ActionResult> GetLoginByUsernamePassword([FromBody] LoginDTO login)
         {
-            //find all vendors in a city and state
+            
             var user = await _context.Users.Where(u => u.Username == login.Username && u.Password == login.Password).FirstOrDefaultAsync();
 
             if (user == null)
@@ -38,12 +39,12 @@ namespace PRSecox.Controllers
             }
 
             return Ok();
-            //new { Firstname = user.Firstname, Lastname = user.Lastname, Id = user.Id, Admin = user.Admin }
+           
         }
 
 
         // GET: api/Users
-        [HttpGet]
+        [HttpGet] //returns list of all users, set to include their requests
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
           if (_context.Users == null)
@@ -54,13 +55,14 @@ namespace PRSecox.Controllers
         }
 
         // GET: api/Users/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}")] //get single user by their id, includes their requests
         public async Task<ActionResult<User>> GetUser(int id)
         {
           if (_context.Users == null)
           {
               return NotFound();
           }
+            //pulling first user by their id(should be unique and shouldn't matter), while also including their requests
             var user = await _context.Users.Include(u => u.Requests).FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
@@ -72,8 +74,8 @@ namespace PRSecox.Controllers
         }
 
         // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        
+        [HttpPut("{id}")] //updates a users information, done on their ID
         public async Task<IActionResult> PutUser(int id, User user)
         {
             if (id != user.Id)
@@ -103,8 +105,8 @@ namespace PRSecox.Controllers
         }
 
         // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+       
+        [HttpPost]//creates a new user
         public async Task<ActionResult<User>> PostUser(User user)
         {
           if (_context.Users == null)
@@ -118,7 +120,7 @@ namespace PRSecox.Controllers
         }
 
         // DELETE: api/Users/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")]// deletes user, done on their ID
         public async Task<IActionResult> DeleteUser(int id)
         {
             if (_context.Users == null)
@@ -132,7 +134,6 @@ namespace PRSecox.Controllers
             }
 
             _context.Users.Remove(user);
-            //todo: Add try/catch
             await _context.SaveChangesAsync();
 
             return NoContent();

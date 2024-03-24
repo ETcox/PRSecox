@@ -24,22 +24,23 @@ namespace PRSecox.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LineItem>>> GetLineItems()
         {
-          if (_context.LineItems == null)
-          {
-              return NotFound();
-          }
+            if (_context.LineItems == null)
+            {
+                return NotFound();
+            }                               // includes the relevant request and products, then returning a list
+                                            // of all lineitems
             return await _context.LineItems.Include(l => l.Request).Include(l => l.Product).ToListAsync();
-            
+
         }
 
 
         [HttpGet("lines-for-pr/{id}")]
         public async Task<ActionResult<IEnumerable<LineItem>>> GetLineItemsByRequestId(int id)
         {
-
+            // GET by requestid, returning lineitems/product
             var lineitem = await _context.LineItems.Where(l => l.RequestId == id).Include(p => p.Product).ToListAsync();
 
-            
+
             if (lineitem == null)
             {
                 return NotFound();
@@ -53,12 +54,12 @@ namespace PRSecox.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LineItem>> GetLineItem(int id)
         {
-          if (_context.LineItems == null)
-          {
-              return NotFound();
-          }
+            if (_context.LineItems == null)
+            {
+                return NotFound();
+            } // includes the relevant request and products, then returning a list from a specific lineitem id
             var lineItem = await _context.LineItems.Include(l => l.Request).Include(l => l.Product).FirstOrDefaultAsync(l => l.Id == id);
-            
+
 
             if (lineItem == null)
             {
@@ -69,8 +70,8 @@ namespace PRSecox.Controllers
         }
 
         // PUT: api/LineItems/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+
+        [HttpPut("{id}")] //updating line item
         public async Task<IActionResult> PutLineItem(int id, LineItem lineItem)
         {
             if (id != lineItem.Id)
@@ -102,17 +103,18 @@ namespace PRSecox.Controllers
         }
 
         // POST: api/LineItems
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPost]
         public async Task<ActionResult<LineItem>> PostLineItem(LineItem lineItem)
         {
-          if (_context.LineItems == null)
-          {
-              return Problem("Entity set 'PRSDbContext.LineItems'  is null.");
-          }
+            if (_context.LineItems == null)
+            {
+                return Problem("Entity set 'PRSDbContext.LineItems'  is null.");
+            }
 
             var requestid = lineItem.RequestId;
             _context.LineItems.Add(lineItem);
+            //adding a new lineitem and then recalculating the total
             await _context.SaveChangesAsync();
             RecalculateRequestTotal(requestid);
 
@@ -136,6 +138,7 @@ namespace PRSecox.Controllers
 
             var requestid = lineItem.RequestId;
             _context.LineItems.Remove(lineItem);
+            //deletes the lineitem and then recalculating the total
             await _context.SaveChangesAsync();
             RecalculateRequestTotal(requestid);
 
@@ -152,10 +155,10 @@ namespace PRSecox.Controllers
         {
 
 
-            var requesttotal = _context.LineItems.Include(p => p.Product).Where(l => l.RequestId == requestid).Sum( p => p.Quantity * p.Product.Price);
-            
-            
-           
+            var requesttotal = _context.LineItems.Include(p => p.Product).Where(l => l.RequestId == requestid).Sum(p => p.Quantity * p.Product.Price);
+
+
+
             var request = _context.Requests.FirstOrDefault(e => e.Id == requestid);
 
 

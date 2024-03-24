@@ -23,10 +23,17 @@ namespace PRSecox.Controllers
 
         // https://localhost:7090/api/products/get-product-by-part-num/2/1234
         [HttpGet("get-product-by-part-num/{vendorid}/{partNum}")]
-        public async Task<ActionResult<Product>> GetProductByPartNum(string partNum, int vendorid)
+        public async Task<ActionResult<Product>> GetProductByPartNum(int vendorid, string partNum)
         {
-           
-            var product = await _context.Products.Include(p => p.Vendor).FirstOrDefaultAsync(p => p.PartNumber == partNum && p.VendorId == vendorid);
+             
+            if( _context.Products == null)
+            {
+                return NotFound();
+            }
+            
+                                                 // finds the first product listed based on it's partnumber and vendorid   
+            var product = await _context.Products.Include(p => p.Vendor)
+                                                 .FirstOrDefaultAsync(p => p.PartNumber == partNum && p.VendorId == vendorid);
 
             if (product == null)
             {
@@ -36,6 +43,8 @@ namespace PRSecox.Controllers
             return product;
         }
 
+
+          
 
 
 
@@ -58,24 +67,24 @@ namespace PRSecox.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-          //if (_context.Products == null)
-          //{
-          //    return NotFound();
-          //}
+              if (_context.Products == null)
+              {
+                  return NotFound();
+              }
 
 
-            var product = await _context.Products.Include(p => p.Vendor).FirstOrDefaultAsync(p => p.Id == id);
+              var product = await _context.Products.Include(p => p.Vendor).FirstOrDefaultAsync(p => p.Id == id);
 
-            if (product == null)
-            {
-                return NotFound();
-            }
+              if (product == null)
+              {
+                  return NotFound();
+              }
 
-            return product;
+              return product;
+
         }
 
         // PUT: api/Products/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
@@ -106,7 +115,6 @@ namespace PRSecox.Controllers
         }
 
         // POST: api/Products
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
