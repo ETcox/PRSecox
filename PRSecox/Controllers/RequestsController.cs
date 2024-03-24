@@ -19,10 +19,10 @@ namespace PRSecox.Controllers
         const string statusApproved = "APPROVED";
         const string statusNew = "NEW";
         const string statusReview = "REVIEW";
-        
-        
-        
-        
+
+
+
+
         public RequestsController(PRSDbContext context)
         {
             _context = context;
@@ -33,10 +33,10 @@ namespace PRSecox.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequests()
         {
-          if (_context.Requests == null)
-          {
-              return NotFound();
-          }
+            if (_context.Requests == null)
+            {
+                return NotFound();
+            }
 
             //pulls all requests and showing the user it belongs to
             return await _context.Requests.Include(r => r.User).ToListAsync();
@@ -46,11 +46,11 @@ namespace PRSecox.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Request>> GetRequest(int id)
         {
-          if (_context.Requests == null)
-          {
-              return NotFound();
-          }
-            
+            if (_context.Requests == null)
+            {
+                return NotFound();
+            }
+
             // getting a single request by its ID and showing the user
             var request = await _context.Requests.Include(r => r.User).FirstOrDefaultAsync(r => r.Id == id);
 
@@ -63,7 +63,7 @@ namespace PRSecox.Controllers
         }
 
         // PUT: api/Requests/5
-       
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRequest(int id, Request request)
         {
@@ -94,15 +94,15 @@ namespace PRSecox.Controllers
         }
 
         // POST: api/Requests
-       
+
         [HttpPost]
         public async Task<ActionResult<Request>> PostRequest(Request request)
         {
-          if (_context.Requests == null)
-          {
-              return Problem("Entity set 'PRSDbContext.Requests'  is null.");
-          }
-            
+            if (_context.Requests == null)
+            {
+                return Problem("Entity set 'PRSDbContext.Requests'  is null.");
+            }
+
             //adds new request and saving to DB
             _context.Requests.Add(request);
             await _context.SaveChangesAsync();
@@ -166,7 +166,7 @@ namespace PRSecox.Controllers
             }
 
 
-                
+
 
             catch (Exception ex)
             {
@@ -183,7 +183,7 @@ namespace PRSecox.Controllers
             {
                 var request = await _context.Requests.FindAsync(id);
 
-            
+
                 if (_context.Requests == null)
                 {
                     return NotFound();
@@ -194,13 +194,13 @@ namespace PRSecox.Controllers
                 request.ReasonForRejection = reason;
                 request.Status = statusRejected;
 
-           
+
                 await _context.SaveChangesAsync();
-           
-            return request; 
+
+                return request;
             }
 
-            catch (Exception ex)    
+            catch (Exception ex)
             {
                 return Problem(ex.Message);
             }
@@ -220,7 +220,7 @@ namespace PRSecox.Controllers
                     return NotFound();
                 }
 
-               
+
                 request.Status = statusApproved;
 
 
@@ -257,10 +257,10 @@ namespace PRSecox.Controllers
             }
 
             await _context.SaveChangesAsync();
-            
+
             return request;
-        
-        
+
+
         }
 
 

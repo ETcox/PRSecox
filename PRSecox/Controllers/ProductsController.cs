@@ -25,13 +25,13 @@ namespace PRSecox.Controllers
         [HttpGet("get-product-by-part-num/{vendorid}/{partNum}")]
         public async Task<ActionResult<Product>> GetProductByPartNum(int vendorid, string partNum)
         {
-             
-            if( _context.Products == null)
+
+            if (_context.Products == null)
             {
                 return NotFound();
             }
-            
-                                                 // finds the first product listed based on it's partnumber and vendorid   
+
+            // finds the first product listed based on it's partnumber and vendorid   
             var product = await _context.Products.Include(p => p.Vendor)
                                                  .FirstOrDefaultAsync(p => p.PartNumber == partNum && p.VendorId == vendorid);
 
@@ -44,22 +44,14 @@ namespace PRSecox.Controllers
         }
 
 
-          
-
-
-
-
-
-
-
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-          if (_context.Products == null)
-          {
-              return NotFound();
-          }
+            if (_context.Products == null)
+            {
+                return NotFound();
+            }
             return await _context.Products.Include(p => p.Vendor).ToListAsync();
         }
 
@@ -67,20 +59,20 @@ namespace PRSecox.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-              if (_context.Products == null)
-              {
-                  return NotFound();
-              }
+            if (_context.Products == null)
+            {
+                return NotFound();
+            }
 
 
-              var product = await _context.Products.Include(p => p.Vendor).FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _context.Products.Include(p => p.Vendor).FirstOrDefaultAsync(p => p.Id == id);
 
-              if (product == null)
-              {
-                  return NotFound();
-              }
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-              return product;
+            return product;
 
         }
 
@@ -118,10 +110,10 @@ namespace PRSecox.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-          if (_context.Products == null)
-          {
-              return Problem("Entity set 'PRSDbContext.Products'  is null.");
-          }
+            if (_context.Products == null)
+            {
+                return Problem("Entity set 'PRSDbContext.Products'  is null.");
+            }
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
