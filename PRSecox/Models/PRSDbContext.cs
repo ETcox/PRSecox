@@ -10,7 +10,7 @@ namespace PRSecox.Models
         public DbSet<Request> Requests { get; set; }   
         public DbSet<LineItem> LineItems { get; set; }  
 
-        //this passes in the connection string
+        //this passes in the connection string, created in program.cs/appsettings.json
         public PRSDbContext(DbContextOptions<PRSDbContext> options) : base(options)
 
         {

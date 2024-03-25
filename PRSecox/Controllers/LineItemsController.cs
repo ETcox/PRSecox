@@ -125,11 +125,9 @@ namespace PRSecox.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLineItem(int id)
         {
-            if (_context.LineItems == null)
-            {
-                return NotFound();
-            }
+            
             var lineItem = await _context.LineItems.FindAsync(id);
+
             if (lineItem == null)
             {
                 return NotFound();
@@ -151,15 +149,15 @@ namespace PRSecox.Controllers
         }
 
 
-        private void RecalculateRequestTotal(int requestid)
+        private async void RecalculateRequestTotal(int requestid)
         {
 
 
-            var requesttotal = _context.LineItems.Include(p => p.Product).Where(l => l.RequestId == requestid).Sum(p => p.Quantity * p.Product.Price);
+            var requesttotal = await _context.LineItems.Include(p => p.Product).Where(l => l.RequestId == requestid).SumAsync(p => p.Quantity * p.Product.Price);
 
 
 
-            var request = _context.Requests.FirstOrDefault(e => e.Id == requestid);
+            var request = await _context.Requests.FirstOrDefaultAsync(e => e.Id == requestid);
 
 
             //calculate the total

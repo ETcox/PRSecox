@@ -33,7 +33,7 @@ namespace PRSecox.Models
         [StringLength(255)]
         public string? PhotoPath { get; set; }
 
-
+        //vendor is a fk for product table
         public Vendor? Vendor { get; set; }
     }
 }

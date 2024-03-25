@@ -1,6 +1,6 @@
 ﻿namespace PRSecox.Models
 {
-    public class LoginDTO
+    public class LoginDTO // used in users controller to create "getloginbyusernamepassword"
     {
         
         public string Username { get; set; }

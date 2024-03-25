@@ -18,7 +18,7 @@ void AddJsonOptions(Action<object> value)
 }
 
 builder.Services.AddDbContext<PRSDbContext>(
-        // lambda
+        // lambda -- using connectionstring created in appsettings.json, used for dbcontext
         options => options.UseSqlServer(builder.Configuration.GetConnectionString("PrsConnString"))
         );
 

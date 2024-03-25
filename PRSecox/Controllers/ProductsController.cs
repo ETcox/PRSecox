@@ -26,11 +26,6 @@ namespace PRSecox.Controllers
         public async Task<ActionResult<Product>> GetProductByPartNum(int vendorid, string partNum)
         {
 
-            if (_context.Products == null)
-            {
-                return NotFound();
-            }
-
             // finds the first product listed based on it's partnumber and vendorid   
             var product = await _context.Products.Include(p => p.Vendor)
                                                  .FirstOrDefaultAsync(p => p.PartNumber == partNum && p.VendorId == vendorid);
@@ -59,12 +54,6 @@ namespace PRSecox.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            if (_context.Products == null)
-            {
-                return NotFound();
-            }
-
-
             var product = await _context.Products.Include(p => p.Vendor).FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
@@ -124,10 +113,7 @@ namespace PRSecox.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            if (_context.Products == null)
-            {
-                return NotFound();
-            }
+           
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {

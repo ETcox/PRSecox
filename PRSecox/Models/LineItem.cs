@@ -21,7 +21,7 @@ namespace PRSecox.Models
         public int Quantity { get; set; } = 1;
 
 
-
+        //these are fk for LineItem, is included in methods
         public Request? Request { get; set; }
         public Product? Product { get; set; }
 

@@ -46,10 +46,7 @@ namespace PRSecox.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Request>> GetRequest(int id)
         {
-            if (_context.Requests == null)
-            {
-                return NotFound();
-            }
+           
 
             // getting a single request by its ID and showing the user
             var request = await _context.Requests.Include(r => r.User).FirstOrDefaultAsync(r => r.Id == id);
@@ -114,10 +111,7 @@ namespace PRSecox.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRequest(int id)
         {
-            if (_context.Requests == null)
-            {
-                return NotFound();
-            }
+           
             var request = await _context.Requests.FindAsync(id);
             if (request == null)
             {
@@ -140,7 +134,7 @@ namespace PRSecox.Controllers
                 var request = await _context.Requests.FindAsync(id);
 
 
-                if (_context.Requests == null)
+                if (request == null)
                 {
                     return NotFound();
                 }
@@ -184,7 +178,7 @@ namespace PRSecox.Controllers
                 var request = await _context.Requests.FindAsync(id);
 
 
-                if (_context.Requests == null)
+                if (request == null)
                 {
                     return NotFound();
                 }
@@ -215,7 +209,7 @@ namespace PRSecox.Controllers
                 var request = await _context.Requests.FindAsync(id);
 
 
-                if (_context.Requests == null)
+                if (request == null)
                 {
                     return NotFound();
                 }
@@ -244,12 +238,6 @@ namespace PRSecox.Controllers
             var request = await _context.Requests.Include(r => r.User).Where(r => r.UserId != userid && r.Status == statusReview)
                 .ToListAsync();
 
-
-
-            if (_context.Requests == null)
-            {
-                return NotFound();
-            }
 
             if (request == null)
             {

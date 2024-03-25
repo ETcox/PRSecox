@@ -38,7 +38,7 @@ namespace PRSecox.Controllers
                 return NotFound();
             }
 
-            return Ok();
+            return Ok(user);
            
         }
 
@@ -58,10 +58,7 @@ namespace PRSecox.Controllers
         [HttpGet("{id}")] //get single user by their id, includes their requests
         public async Task<ActionResult<User>> GetUser(int id)
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
+         
             //pulling first user by their id(should be unique and shouldn't matter), while also including their requests
             var user = await _context.Users.Include(u => u.Requests).FirstOrDefaultAsync(u => u.Id == id);
 
@@ -123,10 +120,7 @@ namespace PRSecox.Controllers
         [HttpDelete("{id}")]// deletes user, done on their ID
         public async Task<IActionResult> DeleteUser(int id)
         {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
+            
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
