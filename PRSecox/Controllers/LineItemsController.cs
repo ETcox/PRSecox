@@ -85,7 +85,7 @@ namespace PRSecox.Controllers
             {
                 var requestid = lineItem.RequestId;
                 await _context.SaveChangesAsync();
-                RecalculateRequestTotal(requestid);
+                await RecalculateRequestTotal(requestid);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -116,7 +116,7 @@ namespace PRSecox.Controllers
             _context.LineItems.Add(lineItem);
             //adding a new lineitem and then recalculating the total
             await _context.SaveChangesAsync();
-            RecalculateRequestTotal(requestid);
+            await RecalculateRequestTotal(requestid);
 
             return CreatedAtAction("GetLineItem", new { id = lineItem.Id }, lineItem);
         }
@@ -138,7 +138,7 @@ namespace PRSecox.Controllers
             _context.LineItems.Remove(lineItem);
             //deletes the lineitem and then recalculating the total
             await _context.SaveChangesAsync();
-            RecalculateRequestTotal(requestid);
+            await RecalculateRequestTotal(requestid);
 
             return NoContent();
         }
@@ -149,7 +149,7 @@ namespace PRSecox.Controllers
         }
 
 
-        private async void RecalculateRequestTotal(int requestid)
+        private async Task RecalculateRequestTotal(int requestid)
         {
 
 
